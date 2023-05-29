@@ -14,6 +14,9 @@
     <link rel="stylesheet" href="../dist/css/style.css">
     <link rel="stylesheet" href="../dist/css/new_style.css">
     <!-- <link rel="stylesheet" href="css/index.css" /> -->
+    <script type="text/javascript" charset="utf-8" 
+src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML,
+https://vincenttam.github.io/javascripts/MathJaxLocal.js"></script>
 </head>
 
 <body class="is-boxed has-animations">
@@ -54,7 +57,7 @@
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row"> 
                     <h2>Abstract</h2>
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-justify">
                         <p>
@@ -72,7 +75,14 @@
                         <!--image class="intro-image" src="images/teaser.png" /-->
 
                         <p class="text-justify">
+                            The key idea behind DSL is to adapt reinforcement learning policies to the NeSy context: given the NN predictions $\bf t$ with $\sum_i t_i = 1$, we use the greedy policy $\pi({\bf t}) = argmax_i t_i $ to select a single discrete symbol, and the function $\mu({\bf t}) = max_i t_i$ to select the corresponding value in $\bf t$, interpreted as a truth value under a fuzzy logic semantics. For example, in the image above, $\bf t_1$ and $\bf t_2$ are predictions from neural networks $N_1$ and $N_2$ respectively. The policy function $\pi(\bf t_1)$ returns the symbol with the highest truth value in $\bf t_1$, hence returning the symbol $s_8$. Similarly, $\pi(\bf t_2)$ returns the symbol with the highest truth value in $\bf t_1$, i.e.  $s_0$. The functions $\mu(\bf t_1)$ and $\mu(\bf t_2)$ return the highest values in the vectors $\bf t_1$ and $\bf t_2$ respectively, i.e.,  $\mu(\bf t_1) = t_1^{*} = 0.5$ and  $\mu(\bf{t_2}) = t_2^{*} = 0.6$. We can interpret the values $\mu(\bf t_1)$ and $\mu(\bf t_2)$ as the truth values of the propositions $s_8 = x_1$  and $s_0 = x_2$ respectivaly, where $x_1$ and $x_2$ are the unknown labels of the two MNIST images.
                             
+                           
+                            
+                            The symbols $s_8$ and $s_0$ are passed to the symbolic function, which is represented as a lookup table $\bf G$, returning the final output $G[s_0,s_8]$. The confidence in the output ($G[s_0,s_8]$ in this case) is given as the  truth value of the following proposition: 
+                            $$(s_0 = x_1) \land (s_8 = x_2)$$ 
+                            using the godel semantics of conjunction, i.e., $\bf{t^{*}}$ = $min(\bf{t_1^{*}},\bf{t_2^{*}})$, we have the final confidence value of the prediction. The framework considers the correctness of the final output, producing a label $l=1$ if the prediction is correct and $l=0$ otherwise. Such a label is given as supervision for $\bf t^*$. In the example, the prediction is wrong since the first digit has been classified as $s_8$ instead of $s_3$. At this point, given the wrong final output of the summation, DSL detects the presence of an error. In detail, it creates a label $l$, which is zero if the prediction is wrong and one if it is correct. Such a label is given as supervision for $\bf t^*$. The confidence of the network (i.e., the truth value calculated with the $min$). 
+Since the $min$ function admits only one non-zero partial derivative (corresponding to the minimum value), the back-propagation changes the weights of a single network ($N_1$ in the figure above). If the prediction is wrong, the effect of this change is to reduce the truth value of the currently selected symbol ($s_8$), increasing the chances of choosing a different symbol in the next iteration. Finally, \shortname\ can also learn the table $\bf G$ from the data by applying $\pi$ and $\mu$ to a learnable tensor $\bf W$. 
                         </p>
                     </div>
 
