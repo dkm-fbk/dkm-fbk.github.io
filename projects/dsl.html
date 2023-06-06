@@ -51,63 +51,66 @@ https://vincenttam.github.io/javascripts/MathJaxLocal.js"></script>
             <div class="container">
                 <div class="row">
                     <div class="has-top-divider">&nbsp;</div>
-                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2"></div>
-                    <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1"></div>
+    		    <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
                             <image src="../images/teaser.png" class="img-fluid" />
                     </div>
                 </div>
 
                 <div class="row"> 
-                    <h2>Abstract</h2>
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-justify">
                         <p>
-                            Neuro-Symbolic (NeSy) integration combines symbolic reasoning with Neural Networks (NNs) for tasks requiring perception and reasoning. Most NeSy systems rely on continuous relaxation of logical knowledge, and no discrete decisions are made within the model pipeline. Furthermore, these methods assume that the symbolic rules are given. In this paper, we propose Deep Symbolic Learning (DSL), a NeSy system that learns NeSy-functions, i.e., the composition of a (set of) perception functions which map continuous data to discrete symbols, and a symbolic function over the set of symbols. DSL learns simultaneously the perception and symbolic functions while being trained only on their composition (NeSy-function). The key novelty of DSL is that it can create internal (interpretable) symbolic representations and map them to perception inputs within a differentiable NN learning pipeline. The created symbols are automatically selected to generate symbolic functions that best explain the data. We provide experimental analysis to substantiate the efficacy of DSL in simultaneously learning perception and symbolic functions.
-                        </p>
-                    </div>
+                        <br>
+                        Deep Symbolic Learning (DSL) is a Neuro-Symbolic Integration (NeSy) framework for solving tasks requiring perception and reasoning. Differently from other NeSy systems, which rely on continuous relaxation of logical knowledge, DSL introduces discrete decisions within the model pipeline. This is achieved by DSL trough the usage of reinforcement learning policies in a novel way, discretizing latent internal symbols inside the network, while keeping the architecture trainable end-to-end. Each symbol extracted is associated with a score between zero and one. This score is similar to the expected reward value in reinforcement learning, but in DSL we interpret it using fuzzy logic. This approach allows us to combine the truth values of internal choices to produce the final output's truth value.
+                        
 
-                </div>
-
-                <div class="row">
-                    <h2>Approach: DSL</h2>
-                    &nbsp;
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-justify">
-
-                        <!--image class="intro-image" src="images/teaser.png" /-->
-
-                        <p class="text-justify">
-                            The key idea behind DSL is to adapt reinforcement learning policies to the NeSy context: given the NN predictions $\bf t$ with $\sum_i t_i = 1$, we use the greedy policy $\pi({\bf t}) = argmax_i t_i $ to select a single discrete symbol, and the function $\mu({\bf t}) = max_i t_i$ to select the corresponding value in $\bf t$, interpreted as a truth value under a fuzzy logic semantics. For example, in the image above, $\bf t_1$ and $\bf t_2$ are predictions from neural networks $N_1$ and $N_2$ respectively. The policy function $\pi(\bf t_1)$ returns the symbol with the highest truth value in $\bf t_1$, hence returning the symbol $s_8$. Similarly, $\pi(\bf t_2)$ returns the symbol with the highest truth value in $\bf t_1$, i.e.  $s_0$. The functions $\mu(\bf t_1)$ and $\mu(\bf t_2)$ return the highest values in the vectors $\bf t_1$ and $\bf t_2$ respectively, i.e.,  $\mu(\bf t_1) = t_1^{*} = 0.5$ and  $\mu(\bf{t_2}) = t_2^{*} = 0.6$. We can interpret the values $\mu(\bf t_1)$ and $\mu(\bf t_2)$ as the truth values of the propositions $s_8 = x_1$  and $s_0 = x_2$ respectivaly, where $x_1$ and $x_2$ are the unknown labels of the two MNIST images.
-                            
-                           
-                            
-                            The symbols $s_8$ and $s_0$ are passed to the symbolic function, which is represented as a lookup table $\bf G$, returning the final output $G[s_0,s_8]$. The confidence in the output ($G[s_0,s_8]$ in this case) is given as the  truth value of the following proposition: 
-                            $$(s_0 = x_1) \land (s_8 = x_2)$$ 
-                            using the godel semantics of conjunction, i.e., $\bf{t^{*}}$ = $min(\bf{t_1^{*}},\bf{t_2^{*}})$, we have the final confidence value of the prediction. The framework considers the correctness of the final output, producing a label $l=1$ if the prediction is correct and $l=0$ otherwise. Such a label is given as supervision for $\bf t^*$. In the example, the prediction is wrong since the first digit has been classified as $s_8$ instead of $s_3$. At this point, given the wrong final output of the summation, DSL detects the presence of an error. It creates a label $l$, which is zero if the prediction is wrong and one if it is correct. Such a label is given as supervision for $\bf t^*$. The confidence of the network (i.e., the truth value calculated with the $min$). 
-Since the $min$ function admits only one non-zero partial derivative (corresponding to the minimum value), the back-propagation changes the weights of a single network ($N_1$ in the figure above). If the prediction is wrong, the effect of this change is to reduce the truth value of the currently selected symbol ($s_8$), increasing the chances of choosing a different symbol in the next iteration. Finally, DSL can also learn the table $\bf G$ from the data by applying $\pi$ and $\mu$ to a learnable tensor $\bf W$. 
-                        </p>
-                    </div>
-
-                </div>
-
-                <div class="row">
+Moreover, DSL is the first NeSy system capable of learning both the perception function and the symbolic knowledge in an end-to-end fashion with supervision only for the downstream task and with minimal biases (only the compositional structure is given). For instance, DSL can learn the function that encodes summation in the MNIST Addition task. This means our model is not only capable of interpreting and processing information, but also of learning underlying symbolic representations directly from data. It’s a promising step towards more comprehensive and robust models in the Neuro-Symbolic Integration field.
+                    </p>
                     <h2>Results</h2>
-                    In  the following table we report the accuracy on the MNIST MultiDigitSum (MDS) task. For further experiments/analysis, please refer to our paper. 
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_CHTML-full"></script>
+                    <p>
+                    In  the following table we report the accuracy on the MNIST MultiDigitSum task at a varying number of digits. For further experiments/analysis, please refer to our paper.
+                    </p>
+                    <style>
+    .custom-image {
+        max-width: 80%;
+        height: auto;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+</style>
+                   <div class="row">
+    <div class="has-top-divider">&nbsp;</div>
+    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1"></div>
+    <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10 d-flex justify-content-center">
+        <img src="../images/table.png" class="img-fluid custom-image" />
+    </div>
+    <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1"></div>
+</div>
 
-\[
-\begin{array}{l|lll}
-%\multicolumn{5}{c}{Accuracy (\%)}                                                                                       \\
+T/O stands for timeout. Note that DSL learns the knowledge, while the other methods assume it to be given.</div>
+                </div>
+<h2>Citation</h2>
+<p>If you are using DSL in your work, please consider citing our paper:</p>
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        
+                        <pre xml:space="preserve" style="display: block;">
+@article{daniele2022deep,
+  title={Deep Symbolic Learning: Discovering Symbols and Rules from Perceptions},
+  author={Daniele, Alessandro and Campari, Tommaso and Malhotra, Sagar and Serafini, Luciano},
+  journal={arXiv preprint arXiv:2208.11561},
+  year={2023}
+}
+                        </pre>
+                    </div>
+                    
+                    <h2>Acknowledgements</h2>
+                    
+                        <p>
+                            TC and LS acknowledge the support  of the PNRR project FAIR -  Future AI Research (PE00000013),  under the NRRP MUR program funded by the NextGenerationEU.
+                        </p>
 
-   
-\hline
-\text{Neural Answer Set Programming}  & 93.9 \pm 0.7 & {T/O}             &{T/O}                                                                 \\
-\text{Deep ProbLog} & 95.2 \pm 1.7 & {T/O}             & {T/O}                                                                 \\
-\text{Deep StochLog} & 96.4 \pm 0.1 & 92.7 \pm 0.6  & {T/O}                                                                 \\ \hline
-\text{DSL}  & 95.0 \pm 0.7 & 88.9 \pm 0.5  & 64.1 \pm 1.5                                           \\
-\hline
-\end{array}
-
-\]
-T/O stands for timeout.  DSL is the only method which learns the knowledge, the other methods assume it to be given.
+                </div>
 
                     &nbsp;
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-justify">
@@ -132,30 +135,6 @@ T/O stands for timeout.  DSL is the only method which learns the knowledge, the 
                     </div>
                 </div>
 
-
-                <div class="row">
-                    <h2>Citation</h2>
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        
-                        <pre xml:space="preserve" style="display: block;">
-@article{daniele2022deep,
-  title={Deep Symbolic Learning: Discovering Symbols and Rules from Perceptions},
-  author={Daniele, Alessandro and Campari, Tommaso and Malhotra, Sagar and Serafini, Luciano},
-  journal={arXiv preprint arXiv:2208.11561},
-  year={2023}
-}
-                        </pre>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <h2>Acknowledgements</h2>
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        <p class="text-justify">
-                            TC and LS acknowledge the support  of the PNRR project FAIR -  Future AI Research (PE00000013),  under the NRRP MUR program funded by the NextGenerationEU.
-                        </p>
-                    </div>
-                </div>
             </div>
         </main>
     </div>
