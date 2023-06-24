@@ -1,0 +1,16 @@
+<script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.5.0/aframe/examples/vendor/aframe/build/aframe.min.js"></script>
+<!--<script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.5.0/aframe/build/aframe-ar.js"></script>-->
+<script src="https://jeromeetienne.github.io/AR.js/aframe/build/aframe-ar.js"></script>
+<body style='margin : 0px; overflow: hidden;'>
+  <a-scene embedded arjs='detectionMode: mono_and_matrix; matrixCodeType: 3x3;'>
+<!--    <a-assets>-->
+<!--      <video id="animation_1" autoplay="true" loop="true" muted="true" src="mp4.mp4"></video>-->
+<!--    </a-assets>-->
+
+    <!-- Using the asset management system. -->
+    <a-marker-camera type='barcode' value='5'></a-marker-camera>
+    <a-video autoplay="true" loop="true" muted="true" src="prova.mp4" rotation="90 180 0"></a-video>
+
+    <!-- define a camera which will move according to the marker position -->
+  </a-scene>
+</body>
